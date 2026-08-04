@@ -454,8 +454,11 @@ document.addEventListener('click', function(e) {
     closeFilterPanel();
   }
 });
-window.addEventListener('scroll', function() {
-  if (document.getElementById('af-panel').classList.contains('open')) closeFilterPanel();
+window.addEventListener('scroll', function(e) {
+  const panel = document.getElementById('af-panel');
+  if (!panel.classList.contains('open')) return;
+  if (panel.contains(e.target)) return; // 패널 내부(값 목록 등) 스크롤은 무시 — 바깥(표/페이지) 스크롤일 때만 닫음
+  closeFilterPanel();
 }, true);
 
 function afValueToggle() {
