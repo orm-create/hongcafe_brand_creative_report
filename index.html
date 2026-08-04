@@ -26,6 +26,9 @@ body { font-family: -apple-system, "Malgun Gothic", sans-serif; background: #f3f
 .region-btn { padding: 7px 16px; border-radius: 999px; border: 1px solid #d8dce3; background: #fff; cursor: pointer; font-size: 13px; color: #555; }
 .region-btn.active { background: #2952e3; color: #fff; border-color: #2952e3; }
 .region-btn:hover:not(.active) { background: #eef1f6; }
+.table-toolbar { display: flex; justify-content: flex-end; margin-bottom: 6px; }
+.toolbar-btn { padding: 6px 12px; border-radius: 8px; border: 1px solid #d8dce3; background: #fff; cursor: pointer; font-size: 12px; color: #555; }
+.toolbar-btn:hover { background: #eef1f6; color: #2952e3; }
 .date-hint { font-size: 12px; color: #999; }
 .filter-bar select { padding: 6px 10px; border-radius: 8px; border: 1px solid #d8dce3; font-size: 13px; }
 .table-scroll { width: 100%; overflow-x: auto; border-radius: 14px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
@@ -100,7 +103,6 @@ table.creative-table { width: 100%; border-collapse: collapse; background: #fff;
 <div class="tabs"><button class="tab-btn active" data-tab="tab0" onclick="showTab('tab0')">국내</button><button class="tab-btn" data-tab="tab1" onclick="showTab('tab1')">해외</button><button class="tab-btn" data-tab="tab-region" onclick="showTab('tab-region')">해외(지역별)</button></div>
 
 <div class="tab-panel active" data-tab="tab0">
-  <div class="scorecard" id="scorecard-tab0"><div class="score-cell"><div class="score-label">노출</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">클릭</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">CTR</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">CPC</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">광고비</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">회원가입</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">가입CPA</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">가입율</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">구매전환</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">구매전환CPA</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">구매전환율</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">매출</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">ROAS</div><div class="score-value">-</div></div></div>
   <div class="date-range-bar">
     <label>기간</label>
     <input type="date" id="start-tab0" onchange="onDateChange('tab0')">
@@ -112,6 +114,8 @@ table.creative-table { width: 100%; border-collapse: collapse; background: #fff;
     <label>캠페인 필터</label>
     <select id="campaign-filter-tab0" onchange="onCampaignFilterChange('tab0')"><option value="__all__">전체 캠페인</option></select>
   </div>
+  <div class="scorecard" id="scorecard-tab0"><div class="score-cell"><div class="score-label">노출</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">클릭</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">CTR</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">CPC</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">광고비</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">회원가입</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">가입CPA</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">가입율</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">구매전환</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">구매전환CPA</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">구매전환율</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">매출</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">ROAS</div><div class="score-value">-</div></div></div>
+  <div class="table-toolbar"><button type="button" class="toolbar-btn" id="filter-toggle-tab0" onclick="toggleFilterRow('tab0')">필터 행 숨기기</button></div>
   <div class="table-scroll">
   <table class="creative-table">
     
@@ -126,7 +130,6 @@ table.creative-table { width: 100%; border-collapse: collapse; background: #fff;
   </div>
 </div>
 <div class="tab-panel" data-tab="tab1">
-  <div class="scorecard" id="scorecard-tab1"><div class="score-cell"><div class="score-label">노출</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">클릭</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">CTR</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">CPC</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">광고비</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">회원가입</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">가입CPA</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">가입율</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">구매전환</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">구매전환CPA</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">구매전환율</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">매출</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">ROAS</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">2만코인 클릭</div><div class="score-value">-</div></div></div>
   <div class="date-range-bar">
     <label>기간</label>
     <input type="date" id="start-tab1" onchange="onDateChange('tab1')">
@@ -138,6 +141,8 @@ table.creative-table { width: 100%; border-collapse: collapse; background: #fff;
     <label>캠페인 필터</label>
     <select id="campaign-filter-tab1" onchange="onCampaignFilterChange('tab1')"><option value="__all__">전체 캠페인</option></select>
   </div>
+  <div class="scorecard" id="scorecard-tab1"><div class="score-cell"><div class="score-label">노출</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">클릭</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">CTR</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">CPC</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">광고비</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">회원가입</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">가입CPA</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">가입율</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">구매전환</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">구매전환CPA</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">구매전환율</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">매출</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">ROAS</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">2만코인 클릭</div><div class="score-value">-</div></div></div>
+  <div class="table-toolbar"><button type="button" class="toolbar-btn" id="filter-toggle-tab1" onclick="toggleFilterRow('tab1')">필터 행 숨기기</button></div>
   <div class="table-scroll">
   <table class="creative-table">
     
@@ -152,7 +157,6 @@ table.creative-table { width: 100%; border-collapse: collapse; background: #fff;
   </div>
 </div>
 <div class="tab-panel" data-tab="tab-region">
-  <div class="scorecard" id="scorecard-tab-region"><div class="score-cell"><div class="score-label">노출</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">클릭</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">CTR</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">CPC</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">광고비</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">회원가입</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">가입CPA</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">가입율</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">구매전환</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">구매전환CPA</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">구매전환율</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">매출</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">ROAS</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">2만코인 클릭</div><div class="score-value">-</div></div></div>
   <div class="date-range-bar">
     <label>기간</label>
     <input type="date" id="start-tab-region" onchange="onDateChange('tab-region')">
@@ -161,6 +165,8 @@ table.creative-table { width: 100%; border-collapse: collapse; background: #fff;
     <span class="date-hint" id="date-hint-tab-region"></span>
   </div>
   <div class="region-filter-bar" id="region-filter-bar-tab-region"><label>지역</label><button type="button" class="region-btn active" data-region="전체" onclick="onRegionButtonClick('tab-region','전체')">전체</button><button type="button" class="region-btn" data-region="일본한인" onclick="onRegionButtonClick('tab-region','일본한인')">일본한인</button><button type="button" class="region-btn" data-region="일본" onclick="onRegionButtonClick('tab-region','일본')">일본</button><button type="button" class="region-btn" data-region="미주한인" onclick="onRegionButtonClick('tab-region','미주한인')">미주한인</button><button type="button" class="region-btn" data-region="기타한인" onclick="onRegionButtonClick('tab-region','기타한인')">기타한인</button><button type="button" class="region-btn" data-region="베트남" onclick="onRegionButtonClick('tab-region','베트남')">베트남</button><button type="button" class="region-btn" data-region="영국한인" onclick="onRegionButtonClick('tab-region','영국한인')">영국한인</button><button type="button" class="region-btn" data-region="미분류" onclick="onRegionButtonClick('tab-region','미분류')">미분류</button></div>
+  <div class="scorecard" id="scorecard-tab-region"><div class="score-cell"><div class="score-label">노출</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">클릭</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">CTR</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">CPC</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">광고비</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">회원가입</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">가입CPA</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">가입율</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">구매전환</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">구매전환CPA</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">구매전환율</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">매출</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">ROAS</div><div class="score-value">-</div></div><div class="score-cell"><div class="score-label">2만코인 클릭</div><div class="score-value">-</div></div></div>
+  <div class="table-toolbar"><button type="button" class="toolbar-btn" id="filter-toggle-tab-region" onclick="toggleFilterRow('tab-region')">필터 행 숨기기</button></div>
   <div class="table-scroll">
   <table class="creative-table">
     
@@ -361,6 +367,14 @@ function onRegionButtonClick(tabId, region) {
   document.querySelectorAll('#region-filter-bar-' + tabId + ' .region-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.region === region);
   });
+}
+
+function toggleFilterRow(tabId) {
+  const row = document.querySelector('#thead-' + tabId + ' .filter-row');
+  const btn = document.getElementById('filter-toggle-' + tabId);
+  const nowHidden = row.style.display !== 'none';
+  row.style.display = nowHidden ? 'none' : '';
+  btn.textContent = nowHidden ? '필터 행 보이기' : '필터 행 숨기기';
 }
 
 function valuesForColumn(tabId, key) {
