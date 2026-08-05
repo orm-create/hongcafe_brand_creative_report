@@ -391,8 +391,9 @@ function getColFilterState(tabId, key) {
 function setColFilter(tabId, key, filterObj) {
   if (!COL_FILTERS[tabId]) COL_FILTERS[tabId] = {};
   COL_FILTERS[tabId][key] = filterObj;
-  if (key === 'campaign') {
-    // 캠페인 필터는 집계 이전 단계(일자별 원본 행)에 적용돼야 소재별 합계가 정확함 — 전체 재집계
+  if (key === 'campaign' || key === 'region') {
+    // 캠페인/지역 필터는 집계 이전 단계(일자별 원본 행)에 적용돼야 소재별 합계가 정확함 — 전체 재집계
+    // (지역은 특히, 국가를 2개 이상 선택하면 소재명 기준으로 합산해야 하므로 반드시 재집계 필요)
     refresh(tabId);
   } else {
     applyFilters(tabId);
@@ -596,10 +597,15 @@ function classifyRegion(campaignName) {
 
 function aggregateRegionList(tabId) {
   const inRange = rowsInDateRange(tabId);
+  const regionFilter = (COL_FILTERS[tabId] && COL_FILTERS[tabId].region) || { type: 'all' };
+  const selectedRegions = regionFilter.type === 'values' ? regionFilter.include : null;
+  // 국가를 2개 이상 선택했을 때만 소재명 기준으로 합산 — 1개 이하 선택(또는 전체)일 땐 기존처럼 지역별로 나눠 보여준다
+  const merge = !!(selectedRegions && selectedRegions.size > 1);
   const grouped = {};
   inRange.forEach(r => {
     const region = classifyRegion(r.c);
-    const key = region + '|' + r.n;
+    if (selectedRegions && !selectedRegions.has(region)) return;
+    const key = merge ? r.n : (region + '|' + r.n);
     if (!grouped[key]) grouped[key] = { region, ad_name: r.n, campaigns: new Set(), imp: 0, clk: 0, sp: 0, reg: 0, pur: 0, pv: 0, c20: 0 };
     const g = grouped[key];
     if (r.c) g.campaigns.add(r.c);
@@ -744,7 +750,7 @@ function refresh(tabId) {
 function rowMatchesColFilters(tabId, d) {
   const filters = COL_FILTERS[tabId] || {};
   for (const key in filters) {
-    if (key === 'campaign') continue; // 캠페인은 집계 이전 단계에서 이미 반영됨
+    if (key === 'campaign' || key === 'region') continue; // 둘 다 집계 이전 단계에서 이미 반영됨
     const f = filters[key];
     if (!f || f.type === 'all') continue;
     if (f.type === 'values' && !f.include.has(cellDisplay(key, d[key]))) return false;
