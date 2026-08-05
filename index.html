@@ -401,9 +401,21 @@ function setColFilter(tabId, key, filterObj) {
 }
 
 function onRegionButtonClick(tabId, region) {
-  setColFilter(tabId, 'region', region === '전체' ? { type: 'all' } : { type: 'values', include: new Set([region]) });
+  // 지역 버튼은 다중 선택(토글) — 여러 국가를 겹쳐 누르면 선택된 국가들의 합계를 보여준다.
+  // "전체"는 선택을 모두 해제하는 리셋 버튼이고, 마지막 국가까지 해제하면 자연히 전체로 돌아간다.
+  const state = getColFilterState(tabId, 'region');
+  const current = state.type === 'values' ? new Set(state.include) : new Set();
+  if (region === '전체') {
+    current.clear();
+  } else if (current.has(region)) {
+    current.delete(region);
+  } else {
+    current.add(region);
+  }
+  setColFilter(tabId, 'region', current.size === 0 ? { type: 'all' } : { type: 'values', include: current });
   document.querySelectorAll('#region-filter-bar-' + tabId + ' .region-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.region === region);
+    const r = btn.dataset.region;
+    btn.classList.toggle('active', r === '전체' ? current.size === 0 : current.has(r));
   });
 }
 
