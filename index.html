@@ -38,13 +38,15 @@
 })();
 </script>
 <div id="shell-root" style="display:flex;height:100vh;font-family:'Pretendard','Apple SD Gothic Neo','Noto Sans KR',-apple-system,sans-serif;">
-  <div style="width:220px;flex:0 0 220px;background:#f7f8fa;border-right:1px solid #e7eaef;padding:20px 0;box-sizing:border-box;">
+  <div id="shell-sidebar" style="width:220px;flex:0 0 220px;background:#f7f8fa;border-right:1px solid #e7eaef;padding:20px 0;box-sizing:border-box;overflow:hidden;white-space:nowrap;transition:width .15s ease,flex-basis .15s ease;">
     <div style="padding:0 20px 16px;font-size:15px;font-weight:800;color:#0f172a;">홍카페 소재 리포트</div>
     <button type="button" class="shell-nav-btn active" data-src="meta.html" onclick="shellSwitch(this)"
       style="display:block;width:100%;text-align:left;padding:12px 20px;border:none;background:transparent;font-size:14px;font-weight:600;color:#2952e3;cursor:pointer;border-left:3px solid #2952e3;">Meta 소재별 성과 리포트</button>
     <button type="button" class="shell-nav-btn" data-src="google.html" onclick="shellSwitch(this)"
       style="display:block;width:100%;text-align:left;padding:12px 20px;border:none;background:transparent;font-size:14px;font-weight:600;color:#555;cursor:pointer;border-left:3px solid transparent;">Google 소재별 성과 리포트</button>
   </div>
+  <button type="button" id="shell-toggle" onclick="shellToggleSidebar()" title="사이드바 접기/펼치기"
+    style="flex:0 0 18px;width:18px;border:none;border-right:1px solid #e7eaef;background:#f7f8fa;cursor:pointer;font-size:11px;color:#97a3b6;padding:0;">‹</button>
   <iframe id="shell-frame" src="meta.html" style="flex:1 1 auto;border:none;width:100%;height:100%;"></iframe>
 </div>
 <script>
@@ -59,6 +61,26 @@ function shellSwitch(btn) {
   btn.style.borderLeftColor = '#2952e3';
   document.getElementById('shell-frame').src = btn.dataset.src;
 }
+
+function shellApplySidebarState(collapsed) {
+  var sidebar = document.getElementById('shell-sidebar');
+  var toggleBtn = document.getElementById('shell-toggle');
+  sidebar.style.width = collapsed ? '0px' : '220px';
+  sidebar.style.flexBasis = collapsed ? '0px' : '220px';
+  toggleBtn.textContent = collapsed ? '›' : '‹';
+}
+
+function shellToggleSidebar() {
+  var collapsed = document.getElementById('shell-sidebar').style.width === '0px';
+  shellApplySidebarState(!collapsed);
+  try { localStorage.setItem('hc_sidebar_collapsed', (!collapsed) ? '1' : '0'); } catch (e) {}
+}
+
+(function() {
+  var saved = '0';
+  try { saved = localStorage.getItem('hc_sidebar_collapsed') || '0'; } catch (e) {}
+  shellApplySidebarState(saved === '1');
+})();
 </script>
 
 </body>
