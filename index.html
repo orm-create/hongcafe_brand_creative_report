@@ -94,7 +94,7 @@ window.gateTryLogin = function() {
 document.addEventListener('DOMContentLoaded', shellLoadFrameIfUnlocked);
 
 // 최신화 버튼: 중계 서버(Cloudflare Worker)가 클라우드 갱신(GitHub Actions)을 시작시킨다. 약 12분 소요.
-var REFRESH_URL = "";
+var REFRESH_URL = "https://hongcafe-report-refresh.gksk7808.workers.dev";
 var refreshTimer = null;
 function fmtTime(iso) {
   if (!iso) return '';
