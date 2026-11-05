@@ -773,9 +773,10 @@ function aggregate(tabId) {
   const rows = inRange.filter(r => pred(r.c));
   const grouped = {};
   rows.forEach(r => {
-    const gk = r.n + '|' + (r.k || '');
+    const gk = tabId === 'tab1' ? 'name:' + r.n : r.n + '|' + (r.k || '');
     if (!grouped[gk]) grouped[gk] = { ad_name: r.n, img: r.k || '', campaigns: new Set(), imp: 0, clk: 0, sp: 0, reg: 0, pur: 0, pv: 0, c20: 0 };
     const g = grouped[gk];
+    if (!g.img && r.k) g.img = r.k;
     if (r.c) g.campaigns.add(r.c);
     g.imp += r.imp; g.clk += r.clk; g.sp += r.sp; g.reg += r.reg; g.pur += r.pur; g.pv += (r.pv || 0); g.c20 += (r.c20 || 0);
   });
