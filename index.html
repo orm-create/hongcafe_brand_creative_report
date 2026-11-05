@@ -44,6 +44,11 @@
       style="display:block;width:100%;text-align:left;padding:12px 20px;border:none;background:transparent;font-size:14px;font-weight:600;color:#2952e3;cursor:pointer;border-left:3px solid #2952e3;">Meta 소재별 성과 리포트</button>
     <button type="button" class="shell-nav-btn" data-src="google.html" onclick="shellSwitch(this)"
       style="display:block;width:100%;text-align:left;padding:12px 20px;border:none;background:transparent;font-size:14px;font-weight:600;color:#555;cursor:pointer;border-left:3px solid transparent;">Google 소재별 성과 리포트</button>
+    <div id="shell-refresh" style="display:none;padding:20px;border-top:1px solid #e7eaef;margin-top:16px;white-space:normal;">
+      <button type="button" id="shell-refresh-btn" onclick="shellRefresh()"
+        style="width:100%;padding:10px;background:#2952e3;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;">🔄 최신화 (어제까지)</button>
+      <div id="shell-refresh-msg" style="font-size:12px;color:#64748b;margin-top:8px;line-height:1.5;"></div>
+    </div>
   </div>
   <button type="button" id="shell-toggle" onclick="shellToggleSidebar()" title="사이드바 접기/펼치기"
     style="flex:0 0 18px;width:18px;border:none;border-right:1px solid #e7eaef;background:#f7f8fa;cursor:pointer;font-size:11px;color:#97a3b6;padding:0;">‹</button>
@@ -87,6 +92,50 @@ window.gateTryLogin = function() {
 };
 
 document.addEventListener('DOMContentLoaded', shellLoadFrameIfUnlocked);
+
+// 최신화 버튼: 중계 서버(Cloudflare Worker)가 클라우드 갱신(GitHub Actions)을 시작시킨다. 약 12분 소요.
+var REFRESH_URL = "";
+var refreshTimer = null;
+function fmtTime(iso) {
+  if (!iso) return '';
+  var d = new Date(iso);
+  return (d.getMonth()+1) + '/' + d.getDate() + ' ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+}
+function shellShowStatus(st, extra) {
+  var msg = document.getElementById('shell-refresh-msg');
+  var btn = document.getElementById('shell-refresh-btn');
+  var text = '';
+  if (st.state === 'running') { text = '갱신 중… (시작 ' + fmtTime(st.startedAt) + ', 약 12분 소요). 끝나면 페이지를 새로고침하세요.'; btn.disabled = true; btn.style.opacity = '.6'; }
+  else {
+    btn.disabled = false; btn.style.opacity = '1';
+    if (st.state === 'success') text = '마지막 갱신 성공 ' + fmtTime(st.updatedAt);
+    else if (st.state === 'failed') text = '마지막 갱신 실패 ' + fmtTime(st.updatedAt) + ' — 다시 눌러 주세요';
+  }
+  if (extra) text = extra + (text ? ' / ' + text : '');
+  msg.textContent = text;
+}
+async function shellPollStatus() {
+  try {
+    var st = await (await fetch(REFRESH_URL + '/status')).json();
+    shellShowStatus(st);
+    if (st.state === 'running') { clearTimeout(refreshTimer); refreshTimer = setTimeout(shellPollStatus, 30000); }
+    return st;
+  } catch (e) { document.getElementById('shell-refresh-msg').textContent = '상태를 불러오지 못했습니다'; }
+}
+async function shellRefresh() {
+  if (!confirm('어제까지의 데이터로 리포트를 갱신합니다 (약 12분). 진행할까요?')) return;
+  try {
+    var r = await fetch(REFRESH_URL + '/refresh', { method: 'POST' });
+    var d = await r.json();
+    shellShowStatus(d, d.message);
+    if (d.state === 'running') { clearTimeout(refreshTimer); refreshTimer = setTimeout(shellPollStatus, 30000); }
+  } catch (e) { document.getElementById('shell-refresh-msg').textContent = '갱신 요청에 실패했습니다'; }
+}
+if (REFRESH_URL) {
+  document.getElementById('shell-refresh').style.display = 'block';
+  shellPollStatus();
+}
+
 
 function shellApplySidebarState(collapsed) {
   var sidebar = document.getElementById('shell-sidebar');
